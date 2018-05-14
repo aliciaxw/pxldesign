@@ -2,30 +2,37 @@
 -- TODO: set up a GUI
 -- TODO: figure out a zoom system 
 -- TODO: clear canvas
+-- TODO: fix colors 
+-- TODO: converter from rgb 0..255 to 0..1
 
-require "dda"
+require "dda" 
 require "obj"
 
-STROKE_SIZE = 3
+STROKE_SIZE = 10
+LINE_COLOR = {1, 0.5, 0.5} -- {r,g,b}
 
 function love.load()
+    icon = love.image.newImageData("img/pxldesign-icon.png")
+    love.window.setIcon(icon)
+
     love.graphics.setBackgroundColor(255,255,255)
     love.window.setTitle("pxldesign")
     -- initialize 2D pixel array, empty at first
     pixels = {}
     initPixelTable(pixels, love.graphics.getWidth(), love.graphics.getHeight())
     -- initialize last position
-    lastpos = {1, 1}
+    lastpos = {0, 0}
     -- initialize button last pressed
     pressed = false
 
     canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
 end
 
+
 function love.update(dt)
     pos = {love.mouse.getX(), love.mouse.getY()}    
     if (love.mouse.isDown(1)) then
-        pixels[pos[1]][pos[2]] = {0,0,0} -- set pixel to {r, g, b}
+        pixels[pos[1]][pos[2]] = LINE_COLOR -- set pixel to {r, g, b}
         if (pressed == true) then 
             addline(pixels, lastpos, pos)
         end
@@ -35,6 +42,7 @@ function love.update(dt)
         pressed = false 
     end
 end
+
 
 function love.draw()
     love.graphics.setPointSize(STROKE_SIZE)
@@ -55,6 +63,7 @@ function love.draw()
     -- debug
     love.graphics.print("Mouse cursor position: "..pos[1].." "..pos[2], 0, 15)
 end
+
 
 function love.keypressed(key)
     if key == "r" then 
